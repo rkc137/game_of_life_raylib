@@ -1,5 +1,7 @@
 #include <raylib.h>
 
+#include "raywrap/Window.hpp"
+
 #include <bitset>
 #include <array>
 #include <random>
@@ -50,12 +52,13 @@ int main()
     std::array<Map, 2> maps;
     setup(maps[0]);
 
-    InitWindow(w_width, w_height, "game of life raylib");
     const double target_fps = 10;
     const std::chrono::duration<double> frame_duration(1.0 / target_fps);
-    SetTargetFPS(static_cast<int>(target_fps));
+    auto win_closer = raywrap::window::init(
+        {w_width, w_height}, "game of life raylib", 10
+    );
     
-    for(bool turn = false; !WindowShouldClose(); turn = !turn)
+    for(bool turn = false; !raywrap::window::should_close(); turn = !turn)
     {
         auto start_time = std::chrono::system_clock::now();
         sim_frame(maps[turn], maps[!turn]);
@@ -63,6 +66,5 @@ int main()
         std::this_thread::sleep_for(frame_duration - (std::chrono::system_clock::now() - start_time));
     }
 
-    CloseWindow();
     return 0;
 }
