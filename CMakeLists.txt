@@ -16,6 +16,7 @@ FetchContent_MakeAvailable(raylib)
 
 add_executable(game_of_life
                             src/main.cpp
+                            src/raywrap/Drawler.cpp
                             src/raywrap/Window.cpp)
 
 target_link_libraries(game_of_life PRIVATE raylib)

@@ -1,6 +1,5 @@
-#include <raylib.h>
-
 #include "raywrap/Window.hpp"
+#include "raywrap/Draw.hpp"
 
 #include <bitset>
 #include <array>
@@ -18,13 +17,16 @@ using Map = std::array<std::bitset<X + 2>, Y + 2>;
 
 void draw(const Map &map)
 {
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
+    raywrap::draw([&](raywrap::DrawContext &ctx){
         for(int y = 0; y < Y; y++)
         for(int x = 0; x < X; x++)
             if(map[y + 1][x + 1])
-                DrawRectangle(x * rect_size, y * rect_size, rect_size, rect_size, MAROON);
-    EndDrawing();
+                ctx.draw_rect(
+                    {rect_size * x, rect_size * y},
+                    {rect_size,     rect_size}
+                );
+        ctx.clear();
+    });
 }
 
 void sim_frame(Map &past, Map &future)
@@ -63,7 +65,9 @@ int main()
         auto start_time = std::chrono::system_clock::now();
         sim_frame(maps[turn], maps[!turn]);
         draw(maps[turn]);
-        std::this_thread::sleep_for(frame_duration - (std::chrono::system_clock::now() - start_time));
+        std::this_thread::sleep_for(
+            frame_duration - (std::chrono::system_clock::now() - start_time)
+        );
     }
 
     return 0;
