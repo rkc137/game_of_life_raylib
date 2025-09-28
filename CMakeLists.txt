@@ -6,6 +6,11 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 include(FetchContent)
+
+if(DEFINED ENV{CMAKE_LIBS_DIR})
+    set(FETCHCONTENT_BASE_DIR "$ENV{CMAKE_LIBS_DIR}")
+endif()
+
 FetchContent_Declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
