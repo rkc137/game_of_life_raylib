@@ -2,19 +2,12 @@
 #include "raywrap/Draw.hpp"
 #include <raylib.h>
 
-#include <bitset>
-#include <array>
 #include <random>
 #include <thread>
 #include <chrono>
 
-constexpr int rect_size = 5;
-constexpr int w_width = 1500;
-constexpr int w_height = 1000;
-constexpr int X = w_width / rect_size;
-constexpr int Y = w_height / rect_size;
-constexpr int past_size = 2;
-using Map = std::array<std::bitset<X + 2>, Y + 2>;
+#include "config.hpp"
+#include "rules.hpp"
 
 void draw(const Map &map)
 {
@@ -30,21 +23,23 @@ void draw(const Map &map)
     });
 }
 
-void sim_frame(Map &past_1, Map &past_2, Map &future)
+void sim_frame(PastMaps &pasts, Map &future)
 {
     for(int y = 1; y < Y + 1; y++)
     for(int x = 1; x < X + 1; x++)
     {
-        int count = -past_1[y][x] - past_2[y][x];
-        for(int i : {-1, 0, 1})
-        for(int j : {-1, 0, 1})
-            count += past_1[y + i][x + j] + past_2[y + i][x + j];
+        int count = 0;
+        for(auto past_ref : pasts)
+        {
+            auto &past = past_ref.get();
+            count -= past[y][x];
+            for(int i : {-1, 0, 1})
+            for(int j : {-1, 0, 1})
+                count += past[y + i][x + j];
+        }
 
         //for now past of cell itself didnt have role
-        if(4 > count || count > 8)
-            future[y][x] = false;
-        else if(4 <= count || count <= 8)
-            future[y][x] = true;
+        future[y][x] = rules[0](count);
     }
 }
 
@@ -61,7 +56,7 @@ int main()
     setup(maps[0]);
     setup(maps[1]);
 
-    const double target_fps = 10;
+    const double target_fps = 60;
     const std::chrono::duration<double> frame_duration(1.0 / target_fps);
     auto win_closer = raywrap::window::init(
         {w_width, w_height}, "game of life raylib", 10
@@ -69,19 +64,19 @@ int main()
     
     for(unsigned int turn = 0; !raywrap::window::should_close(); turn++)
     {
-        std::array<Map*, past_size> pasts = {
-            &maps[(turn + 0) % maps.size()],
-            &maps[(turn + 1) % maps.size()]
+        PastMaps pasts = {
+            maps[(turn + 0) % maps.size()],
+            maps[(turn + 1) % maps.size()]
         };
         auto &present = 
             maps[(turn + 2) % maps.size()];
         
         if(IsKeyDown(KEY_SPACE))
             for(auto past : pasts)
-                setup(*past);
+                setup(past);
 
         auto start_time = std::chrono::system_clock::now();
-        sim_frame(*pasts[0], *pasts[1], present);
+        sim_frame(pasts, present);
         draw(present);
         std::this_thread::sleep_for(
             frame_duration - (std::chrono::system_clock::now() - start_time)
