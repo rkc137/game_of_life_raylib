@@ -45,8 +45,8 @@ void sim_frame(PastMaps &pasts, Map &future)
 
 void setup(Map &map)
 {
-    for(int y = 1; y < Y + 1; y++)
-    for(int x = 1; x < X + 1; x++)
+    for(int y = frame_pos.y; y < frame_size.y; y++)
+    for(int x = frame_pos.x; x < frame_size.x; x++)
         map[y][x] = !(rand() % 8);
 }
 
