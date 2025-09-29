@@ -25,4 +25,9 @@ bool should_close()
     return WindowShouldClose();
 }
 
+void set_title(std::string title)
+{
+    SetWindowTitle(title.c_str());
+}
+
 } // namespace raywrap::window

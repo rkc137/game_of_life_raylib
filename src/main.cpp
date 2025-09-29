@@ -75,7 +75,7 @@ int main()
             
         if(IsKeyReleased(KEY_R))
         {
-            SetWindowTitle(("rule: " + std::to_string(rule_idx)).c_str());
+            raywrap::window::set_title("rule: " + std::to_string(rule_idx));
             rule_idx = ++rule_idx % rules.size();
         }
         else if(IsKeyReleased(KEY_SPACE))

@@ -17,7 +17,9 @@ private:
 };
 
 static Vector2<int> window_size = {};
+
 WindowCloser init(Vector2<int> size, std::string title, int target_fps = 60);
 bool should_close();
+void set_title(std::string title);
 
 } // namespace raywrap::window
