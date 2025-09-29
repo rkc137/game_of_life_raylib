@@ -22,7 +22,8 @@ FetchContent_MakeAvailable(raylib)
 add_executable(game_of_life
                             src/main.cpp
                             src/raywrap/Drawler.cpp
-                            src/raywrap/Window.cpp)
+                            src/raywrap/Window.cpp
+                            src/raywrap/Keyboard.cpp)
 
 target_link_libraries(game_of_life PRIVATE raylib)
 target_link_options(game_of_life PRIVATE -static)

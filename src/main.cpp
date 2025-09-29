@@ -1,6 +1,6 @@
 #include "raywrap/Window.hpp"
 #include "raywrap/Draw.hpp"
-#include <raylib.h>
+#include "raywrap/Keyboard.hpp"
 
 #include <random>
 #include <thread>
@@ -72,13 +72,14 @@ int main()
         auto &present = 
             maps[(turn + past_size) % maps.size()];
     
-            
-        if(IsKeyReleased(KEY_R))
+
+        using namespace raywrap::keyboard; 
+        if(is_pressed(Key::ENTER))
         {
             raywrap::window::set_title("rule: " + std::to_string(rule_idx));
             rule_idx = ++rule_idx % rules.size();
         }
-        else if(IsKeyReleased(KEY_SPACE))
+        else if(is_pressed(Key::SPACE))
             for(auto past : pasts)
                 setup(past);     
 
