@@ -4,7 +4,8 @@
 
 #include "config.hpp"
 
-std::array<std::function<bool(int)>, 3> rules = {
+using Rule = const std::function<bool(int)>;
+const std::array<Rule, 3> rules = {
     [](int count) -> bool { 
         if(4 > count || count > 8)
             return false;
@@ -12,8 +13,9 @@ std::array<std::function<bool(int)>, 3> rules = {
         return true;
     },
     [](int count) -> bool { 
-        if(4 > count || count > 8)
-            return false;
-        return true;
+        return 4 > count && count > 8;
+    },
+    [](int count) -> bool { 
+        return 4 > count || count > 8;
     }
 };

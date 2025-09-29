@@ -23,7 +23,7 @@ void draw(const Map &map)
     });
 }
 
-void sim_frame(PastMaps &pasts, Map &future)
+void sim_frame(PastMaps &pasts, Map &future, Rule &rule)
 {
     for(int y = 1; y < Y + 1; y++)
     for(int x = 1; x < X + 1; x++)
@@ -39,7 +39,7 @@ void sim_frame(PastMaps &pasts, Map &future)
         }
 
         //for now past of cell itself didnt have role
-        future[y][x] = rules[0](count);
+        future[y][x] = rule(count);
     }
 }
 
@@ -61,7 +61,8 @@ int main()
     auto win_closer = raywrap::window::init(
         {w_width, w_height}, "game of life raylib", 10
     );
-    
+
+    int rule_idx = 0;
     for(unsigned int turn = 0; !raywrap::window::should_close(); turn++)
     {
         PastMaps pasts = {
@@ -69,14 +70,20 @@ int main()
             maps[(turn + 1) % maps.size()]
         };
         auto &present = 
-            maps[(turn + 2) % maps.size()];
-        
-        if(IsKeyDown(KEY_SPACE))
+            maps[(turn + past_size) % maps.size()];
+    
+            
+        if(IsKeyReleased(KEY_R))
+        {
+            SetWindowTitle(("rule: " + std::to_string(rule_idx)).c_str());
+            rule_idx = ++rule_idx % rules.size();
+        }
+        else if(IsKeyReleased(KEY_SPACE))
             for(auto past : pasts)
-                setup(past);
+                setup(past);     
 
         auto start_time = std::chrono::system_clock::now();
-        sim_frame(pasts, present);
+        sim_frame(pasts, present, rules[rule_idx]);
         draw(present);
         std::this_thread::sleep_for(
             frame_duration - (std::chrono::system_clock::now() - start_time)
