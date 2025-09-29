@@ -12,18 +12,14 @@ if(DEFINED ENV{CMAKE_LIBS_DIR})
 endif()
 
 FetchContent_Declare(
-    raylib
-    GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAG master
+    rayplus
+    GIT_REPOSITORY https://github.com/rkc137/rayplus.git
+    GIT_TAG 5716eee9aca88d7ba8d590c47a5a62a22d0cf09d
 )
-FetchContent_MakeAvailable(raylib)
+FetchContent_MakeAvailable(rayplus)
 
 
-add_executable(game_of_life
-                            src/main.cpp
-                            src/raywrap/Drawler.cpp
-                            src/raywrap/Window.cpp
-                            src/raywrap/Keyboard.cpp)
+add_executable(game_of_life src/main.cpp)
 
-target_link_libraries(game_of_life PRIVATE raylib)
+target_link_libraries(game_of_life PRIVATE rayplus)
 target_link_options(game_of_life PRIVATE -static)

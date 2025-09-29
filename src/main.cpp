@@ -1,6 +1,6 @@
-#include "raywrap/Window.hpp"
-#include "raywrap/Draw.hpp"
-#include "raywrap/Keyboard.hpp"
+#include <rayplus/Window.hpp>
+#include <rayplus/Draw.hpp>
+#include <rayplus/Keyboard.hpp>
 
 #include <random>
 #include <thread>
@@ -11,7 +11,7 @@
 
 void draw(const Map &map)
 {
-    raywrap::draw([&](raywrap::DrawContext &ctx){
+    rayplus::draw([&](rayplus::DrawContext &ctx){
         ctx.clear();
         for(int y = 0; y < Y; y++)
         for(int x = 0; x < X; x++)
@@ -58,12 +58,12 @@ int main()
 
     const double target_fps = 60;
     const std::chrono::duration<double> frame_duration(1.0 / target_fps);
-    auto win_closer = raywrap::window::init(
+    auto win_closer = rayplus::window::init(
         {w_width, w_height}, "game of life raylib", 10
     );
 
     int rule_idx = 0;
-    for(unsigned int turn = 0; !raywrap::window::should_close(); turn++)
+    for(unsigned int turn = 0; !rayplus::window::should_close(); turn++)
     {
         PastMaps pasts = {
             maps[(turn + 0) % maps.size()],
@@ -73,10 +73,10 @@ int main()
             maps[(turn + past_size) % maps.size()];
     
 
-        using namespace raywrap::keyboard; 
+        using namespace rayplus::keyboard; 
         if(is_pressed(Key::ENTER))
         {
-            raywrap::window::set_title("rule: " + std::to_string(rule_idx));
+            rayplus::window::set_title("rule: " + std::to_string(rule_idx));
             rule_idx = ++rule_idx % rules.size();
         }
         else if(is_pressed(Key::SPACE))
