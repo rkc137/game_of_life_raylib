@@ -54,8 +54,8 @@ void setup(Map &map)
 int main()
 {
     std::array<Map, past_size + 1> maps;
-    setup(maps[0]);
-    setup(maps[1]);
+    for(auto &map : maps)
+        setup(map);
 
     const double target_fps = 60;
     const std::chrono::duration<double> frame_duration(1.0 / target_fps);
@@ -66,10 +66,10 @@ int main()
     int rule_idx = 0;
     for(unsigned int turn = 0; !rayplus::window::should_close(); turn++)
     {
-        PastMaps pasts = {
-            maps[(turn + 0) % maps.size()],
-            maps[(turn + 1) % maps.size()]
-        };
+        PastMaps pasts;
+        pasts.reserve(past_size);
+        for(int i = 0; i < past_size; i++)
+            pasts.push_back(maps[(turn + i) % maps.size()]);
         auto &present = 
             maps[(turn + past_size) % maps.size()];
     
@@ -86,7 +86,8 @@ int main()
 
         auto start_time = std::chrono::system_clock::now();
         sim_frame(pasts, present, rules[rule_idx]);
-        draw(present);
+        if(!(turn % 10))
+            draw(present);
         std::this_thread::sleep_for(
             frame_duration - (std::chrono::system_clock::now() - start_time)
         );

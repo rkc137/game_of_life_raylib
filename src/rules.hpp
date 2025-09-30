@@ -7,15 +7,14 @@
 using Rule = const std::function<bool(int)>;
 const std::array<Rule, 3> rules = {
     [](int count) -> bool { 
-        if(4 > count || count > 8)
+        if(2 * past_size > count || count > 4 * past_size)
             return false;
-        // if(4 <= count || count <= 8)
         return true;
     },
     [](int count) -> bool { 
-        return 4 > count && count > 8;
+        return 2 * past_size > count && count > 4 * past_size;
     },
     [](int count) -> bool { 
-        return 4 > count || count > 8;
+        return 2 * past_size > count || count > 4 * past_size;
     }
 };

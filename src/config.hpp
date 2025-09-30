@@ -2,6 +2,7 @@
 
 #include <bitset>
 #include <array>
+#include <vector>
 
 #include <rayplus/Vector2.hpp>
 
@@ -21,6 +22,5 @@ constexpr rayplus::Vector2<int> frame_size = {
     Y / 2 + 10
 };
 
-
 using Map = std::array<std::bitset<X + 2>, Y + 2>;
-using PastMaps = std::array<std::reference_wrapper<Map>, past_size>;
+using PastMaps = std::vector<std::reference_wrapper<Map>>;
