@@ -12,13 +12,14 @@
 void draw(const Map &map)
 {
     rayplus::draw([&](rayplus::DrawContext &ctx){
-        ctx.clear();
+        ctx.clear(rayplus::black);
         for(int y = 0; y < Y; y++)
         for(int x = 0; x < X; x++)
             if(map[y + 1][x + 1])
                 ctx.draw_rect(
                     {rect_size * x, rect_size * y},
-                    {rect_size,     rect_size}
+                    {rect_size,     rect_size},
+                    rayplus::red
                 );
     });
 }
@@ -76,8 +77,8 @@ int main()
         using namespace rayplus::keyboard; 
         if(is_pressed(Key::ENTER))
         {
-            rayplus::window::set_title("rule: " + std::to_string(rule_idx));
             rule_idx = ++rule_idx % rules.size();
+            rayplus::window::set_title("rule: " + std::to_string(rule_idx));
         }
         else if(is_pressed(Key::SPACE))
             for(auto past : pasts)
