@@ -89,7 +89,7 @@ int main()
 
         auto start_time = std::chrono::system_clock::now();
         sim_frame(pasts, present, rules[rule_idx]);
-        if(!(turn % 10))
+        if(!(turn % (howmh_frames_skip + 1)))
             draw(maps);
         std::this_thread::sleep_for(
             frame_duration - (std::chrono::system_clock::now() - start_time)

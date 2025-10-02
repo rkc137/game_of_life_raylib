@@ -12,6 +12,7 @@ constexpr int w_height = 900;
 constexpr int X = w_width / rect_size;
 constexpr int Y = w_height / rect_size;
 constexpr int past_size = 2;
+constexpr int howmh_frames_skip = 0;
 
 constexpr rayplus::Vector2<int> frame_pos = {
     X / 2 - 10,
