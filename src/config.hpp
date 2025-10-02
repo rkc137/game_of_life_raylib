@@ -24,3 +24,4 @@ constexpr rayplus::Vector2<int> frame_size = {
 
 using Map = std::array<std::bitset<X + 2>, Y + 2>;
 using PastMaps = std::vector<std::reference_wrapper<Map>>;
+using Universe = std::array<Map, past_size + 1>;

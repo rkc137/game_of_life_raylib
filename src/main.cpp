@@ -9,18 +9,21 @@
 #include "config.hpp"
 #include "rules.hpp"
 
-void draw(const Map &map)
+void draw(const Universe &maps)
 {
     rayplus::draw([&](rayplus::DrawContext &ctx){
         ctx.clear(rayplus::black);
-        for(int y = 0; y < Y; y++)
-        for(int x = 0; x < X; x++)
-            if(map[y + 1][x + 1])
-                ctx.draw_rect(
-                    {rect_size * x, rect_size * y},
-                    {rect_size,     rect_size},
-                    rayplus::red
-                );
+        for(auto &map : maps)
+        {
+            for(int y = 0; y < Y; y++)
+            for(int x = 0; x < X; x++)
+                if(map[y + 1][x + 1])
+                    ctx.draw_rect(
+                        {rect_size * x, rect_size * y},
+                        {rect_size,     rect_size},
+                        rayplus::Color{1.f, 1.f, 1.f, 1.f / past_size}
+                    );
+        }
     });
 }
 
@@ -53,7 +56,7 @@ void setup(Map &map)
 
 int main()
 {
-    std::array<Map, past_size + 1> maps;
+    Universe maps;
     for(auto &map : maps)
         setup(map);
 
@@ -75,19 +78,19 @@ int main()
     
 
         using namespace rayplus::keyboard; 
-        if(is_pressed(Key::ENTER))
+        if(is_pressed(Key::enter))
         {
             rule_idx = ++rule_idx % rules.size();
             rayplus::window::set_title("rule: " + std::to_string(rule_idx));
         }
-        else if(is_pressed(Key::SPACE))
+        else if(is_pressed(Key::space))
             for(auto past : pasts)
                 setup(past);     
 
         auto start_time = std::chrono::system_clock::now();
         sim_frame(pasts, present, rules[rule_idx]);
         if(!(turn % 10))
-            draw(present);
+            draw(maps);
         std::this_thread::sleep_for(
             frame_duration - (std::chrono::system_clock::now() - start_time)
         );

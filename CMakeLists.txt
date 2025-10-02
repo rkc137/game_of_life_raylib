@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 23)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(FETCHCONTENT_UPDATES_DISCONNECTED OFF)
 include(FetchContent)
 
 if(DEFINED ENV{CMAKE_LIBS_DIR})
@@ -14,7 +14,7 @@ endif()
 FetchContent_Declare(
     rayplus
     GIT_REPOSITORY https://github.com/rkc137/rayplus.git
-    GIT_TAG d26436ff8b0bf8d0d9631620b5ab68b140283418
+    GIT_TAG caf8f60fe8ee22e98ce053219c65a1b943881aee
 )
 FetchContent_MakeAvailable(rayplus)
 
