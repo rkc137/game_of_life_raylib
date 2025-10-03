@@ -8,10 +8,9 @@
 #include <rayplus/Color.hpp>
 
 constexpr int rect_size = 5;
-constexpr int w_width = 1800;
-constexpr int w_height = 900;
-constexpr int X = w_width / rect_size;
-constexpr int Y = w_height / rect_size;
+constexpr rayplus::Vector2<int> window_size = {1800, 900};
+constexpr int X = window_size.x / rect_size;
+constexpr int Y = window_size.y / rect_size;
 constexpr int past_size = 2;
 constexpr int howmh_frames_skip = 0;
 constexpr int born_chance = 10;

@@ -63,7 +63,7 @@ int main()
     const double target_fps = 60;
     const std::chrono::duration<double> frame_duration(1.0 / target_fps);
     auto win_closer = rayplus::window::init(
-        {w_width, w_height}, "game of life raylib", 10
+        window_size, "game of life raylib", 10
     );
 
     int rule_idx = 0;
