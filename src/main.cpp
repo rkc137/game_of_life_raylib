@@ -12,7 +12,7 @@
 void draw(const Universe &maps)
 {
     rayplus::draw([&](rayplus::DrawContext &ctx){
-        ctx.clear(rayplus::black);
+        ctx.clear(dead_color);
         for(auto &map : maps)
         {
             for(int y = 0; y < Y; y++)
@@ -21,7 +21,7 @@ void draw(const Universe &maps)
                     ctx.draw_rect(
                         {rect_size * x, rect_size * y},
                         {rect_size,     rect_size},
-                        rayplus::Color{1.f, 1.f, 1.f, 1.f / past_size}
+                        alive_color
                     );
         }
     });
@@ -51,7 +51,7 @@ void setup(Map &map)
 {
     for(int y = frame_pos.y; y < frame_size.y; y++)
     for(int x = frame_pos.x; x < frame_size.x; x++)
-        map[y][x] = !(rand() % 8);
+        map[y][x] = !(rand() % born_chance);
 }
 
 int main()
@@ -69,6 +69,7 @@ int main()
     int rule_idx = 0;
     for(unsigned int turn = 0; !rayplus::window::should_close(); turn++)
     {
+        auto start_time = std::chrono::system_clock::now();
         PastMaps pasts;
         pasts.reserve(past_size);
         for(int i = 0; i < past_size; i++)
@@ -87,7 +88,6 @@ int main()
             for(auto past : pasts)
                 setup(past);     
 
-        auto start_time = std::chrono::system_clock::now();
         sim_frame(pasts, present, rules[rule_idx]);
         if(!(turn % (howmh_frames_skip + 1)))
             draw(maps);

@@ -14,7 +14,7 @@ endif()
 FetchContent_Declare(
     rayplus
     GIT_REPOSITORY https://github.com/rkc137/rayplus.git
-    GIT_TAG caf8f60fe8ee22e98ce053219c65a1b943881aee
+    GIT_TAG 603f7206b04fa2785db2e32013d11b3de7468e65
 )
 FetchContent_MakeAvailable(rayplus)
 
