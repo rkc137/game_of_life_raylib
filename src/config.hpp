@@ -17,15 +17,17 @@ constexpr int born_chance = 10;
 const auto dead_color = rayplus::Color::white;
 const auto alive_color = rayplus::Color{230, 41, 55, 255 / past_size};
 
-constexpr rayplus::Vector2<int> frame_pos = {
-    X / 2 - 10,
-    Y / 2 - 10
-};
-constexpr rayplus::Vector2<int> frame_size = {
-    X / 2 + 10,
-    Y / 2 + 10
-};
-
 using Map = std::array<std::bitset<X + 2>, Y + 2>;
 using PastMaps = std::vector<std::reference_wrapper<Map>>;
 using Universe = std::array<Map, past_size + 1>;
+using Frame = std::pair<rayplus::Vector2<int>, rayplus::Vector2<int>>;
+
+constexpr Frame full_frame = {
+    {1, 1},
+    {X, Y}
+};
+
+constexpr Frame little_frame = {
+    {X / 2 - 10, Y / 2 - 10},
+    {X / 2 + 10, Y / 2 + 10}
+};

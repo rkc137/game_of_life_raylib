@@ -49,8 +49,9 @@ void sim_frame(PastMaps &pasts, Map &future, Rule &rule)
 
 void setup(Map &map)
 {
-    for(int y = frame_pos.y; y < frame_size.y; y++)
-    for(int x = frame_pos.x; x < frame_size.x; x++)
+    static const auto [pos, size] = little_frame;
+    for(int y = pos.y; y < size.y; y++)
+    for(int x = pos.x; x < size.x; x++)
         map[y][x] = !(rand() % born_chance);
 }
 
