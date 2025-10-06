@@ -27,29 +27,34 @@ void draw(const Universe &maps)
     });
 }
 
-void sim_frame(PastMaps &pasts, Map &future, Rule &rule)
+template <typename RuleT>
+void sim_frame(PastMaps &pasts, Map &future, RuleT &rule)
 {
     for(int y = 1; y < Y + 1; y++)
     for(int x = 1; x < X + 1; x++)
     {
         int count = 0;
+        int selfs_count = 0;
         for(auto past_ref : pasts)
         {
             auto &past = past_ref.get();
             count -= past[y][x];
+            selfs_count += past[y][x];
             for(int i : {-1, 0, 1})
             for(int j : {-1, 0, 1})
                 count += past[y + i][x + j];
         }
 
-        //for now past of cell itself didnt have role
-        future[y][x] = rule(count);
+        if constexpr (std::is_same_v<RuleT, Rules::Extravert>)
+            future[y][x] = rule(count);
+        else if constexpr (std::is_same_v<RuleT, Rules::Introvert>)
+            future[y][x] = rule(count, selfs_count);
     }
 }
 
 void setup(Map &map)
 {
-    static const auto [pos, size] = little_frame;
+    static const auto [pos, size] = full_frame;
     for(int y = pos.y; y < size.y; y++)
     for(int x = pos.x; x < size.x; x++)
         map[y][x] = !(rand() % born_chance);
@@ -80,6 +85,7 @@ int main()
     
 
         using namespace rayplus::keyboard; 
+        static auto &rules = Rules::introverts;
         if(is_pressed(Key::enter))
         {
             rule_idx = ++rule_idx % rules.size();
@@ -87,7 +93,7 @@ int main()
         }
         else if(is_pressed(Key::space))
             for(auto past : pasts)
-                setup(past);     
+                setup(past);
 
         sim_frame(pasts, present, rules[rule_idx]);
         if(!(turn % (howmh_frames_skip + 1)))
