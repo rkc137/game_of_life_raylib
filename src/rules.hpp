@@ -50,6 +50,16 @@ const auto introverts = std::to_array<Introvert>({
            count == 3 * past_size - 1)
             return true;
         return selfs_count == 1 || selfs_count == 2;
+    },
+
+    [](int count, int selfs_count) -> bool {
+        if(count < 2 * past_size || 
+           count > 3 * past_size)
+            return false;
+        if(count == 3 * past_size ||
+           count == 3 * past_size - 1)
+            return true;
+        return selfs_count == 3 || selfs_count == 2;
     }
 });
 

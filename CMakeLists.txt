@@ -14,11 +14,11 @@ endif()
 FetchContent_Declare(
     rayplus
     GIT_REPOSITORY https://github.com/rkc137/rayplus.git
-    GIT_TAG 603f7206b04fa2785db2e32013d11b3de7468e65
+    GIT_TAG 82db172837b9617b8e9a97bf098c4e3acec115da
 )
 FetchContent_MakeAvailable(rayplus)
 
-
+add_compile_options(-Wall -Wextra)
 add_executable(game_of_life src/main.cpp)
 
 target_link_libraries(game_of_life PRIVATE rayplus)

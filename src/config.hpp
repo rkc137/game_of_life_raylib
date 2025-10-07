@@ -11,7 +11,7 @@ constexpr int rect_size = 5;
 constexpr rayplus::Vector2<int> window_size = {1800, 900};
 constexpr int X = window_size.x / rect_size;
 constexpr int Y = window_size.y / rect_size;
-constexpr int past_size = 3;
+constexpr int past_size = 1;
 constexpr int howmh_frames_skip = 0;
 constexpr int born_chance = 2;
 constexpr auto shadow_color = rayplus::Color{0, 0, 0, 10};
@@ -24,7 +24,7 @@ enum class DrawMode
     rainbow,
     rainbow_porridge
 };
-constexpr auto draw_mode = DrawMode::rainbow_porridge;
+constexpr auto draw_mode = DrawMode::normal;
 
 using Map = std::array<std::bitset<X + 2>, Y + 2>;
 using PastMaps = std::vector<std::reference_wrapper<Map>>;

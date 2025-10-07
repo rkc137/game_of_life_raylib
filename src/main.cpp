@@ -12,24 +12,34 @@
 #include "draw.hpp"
 #include "sim_frame.hpp"
 
-void setup(Map &map, Frame frame)
+void setup(Universe &maps, Frame frame)
 {
     static const auto [pos, size] = frame;
-    for(int y = pos.y; y < size.y; y++)
-    for(int x = pos.x; x < size.x; x++)
-        map[y][x] = !(rand() % born_chance);
+    for(auto &map : maps)
+        for(int y = pos.y; y < size.y; y++)
+        for(int x = pos.x; x < size.x; x++)
+            map[y][x] = !(rand() % born_chance);
+}
+
+void clear(Universe &maps, Frame frame)
+{
+    static const auto [pos, size] = frame;
+    for(auto &map : maps)
+        for(int y = pos.y; y < size.y; y++)
+        for(int x = pos.x; x < size.x; x++)
+            map[y][x] = false;
 }
 
 int main()
 {
     Universe maps;
-    for(auto &map : maps)
-        setup(map, full_frame);
+    setup(maps, full_frame);
+    static auto &current_rules = Rules::introverts;
 
     const double target_fps = 60;
     const std::chrono::duration<double> frame_duration(1.0 / target_fps);
     auto win_closer = rayplus::window::init(
-        window_size, "game of life raylib", 10
+        window_size, "game of life raylib", target_fps
     );
 
     int rule_idx = 0;
@@ -44,19 +54,24 @@ int main()
             maps[(turn + past_size) % maps.size()];
     
 
-        using namespace rayplus::keyboard; 
-        static auto &current_rules = Rules::introverts;
-        if(is_pressed(Key::enter))
+        using namespace rayplus::keyboard;
+        switch(get_key_pressed())
         {
-            rule_idx = ++rule_idx % current_rules.size();
-            rayplus::window::set_title("rule: " + std::to_string(rule_idx));
+            case Key::enter:
+                rule_idx = ++rule_idx % current_rules.size();
+                rayplus::window::set_title("rule: " + std::to_string(rule_idx));
+            break;
+            case Key::r:
+                setup(maps, full_frame);
+            break;
+            case Key::space:
+                setup(maps, little_frame);
+            break;
+            case Key::c:
+                clear(maps, little_frame);
+            break;
+            default:
         }
-        else if(is_pressed(Key::r))
-            for(auto past : pasts)
-                setup(past, full_frame);
-        else if(is_pressed(Key::space))
-            for(auto past : pasts)
-                setup(past, little_frame);
 
         sim_frame(pasts, present, current_rules[rule_idx]);
         if(!(turn % (howmh_frames_skip + 1)))
