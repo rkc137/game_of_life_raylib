@@ -13,7 +13,7 @@ void draw(const Universe &maps)
 {
     rayplus::draw([&](rayplus::DrawContext &ctx){
         rayplus::Color rainbow_color;
-        if constexpr (!is_rainbow_rave)
+        if constexpr (draw_mode == DrawMode::normal)
         {
             ctx.clear(dead_color);
         }
@@ -21,7 +21,10 @@ void draw(const Universe &maps)
         {
             //you cant make shadow with clear, cause when clean calls, its CLEAR it all
             ctx.draw_rect({}, window_size, shadow_color);
-            rainbow_color = rayplus::Color{rand() % 255, rand() % 255, rand() % 255, 255};
+            
+            if constexpr (draw_mode == DrawMode::rainbow)
+                rainbow_color = rayplus::Color{rand() % 255, rand() % 255, rand() % 255, 255};
+            // else if constexpr (draw_mode == DrawMode::rainbow_porridge);
         }
         
         for(auto &map : maps)
@@ -32,10 +35,16 @@ void draw(const Universe &maps)
                     ctx.draw_rect(
                         {rect_size * x, rect_size * y},
                         {rect_size,     rect_size},
-                        [&](){
-                            if constexpr (is_rainbow_rave)
+                        [&]() -> rayplus::Color {
+                            if constexpr (draw_mode == DrawMode::normal)
+                                return alive_color;
+                            else if constexpr (draw_mode == DrawMode::rainbow)
                                 return rainbow_color;
-                            return alive_color;
+                            else if constexpr (draw_mode == DrawMode::rainbow_porridge)
+                                return {rand() % 255, rand() % 255, rand() % 255, 255};
+                            else
+                                throw std::runtime_error("the behavior for this rule (if its rule) is undefined");
+                            return {};
                         }()
                     );
         }
@@ -101,7 +110,7 @@ int main()
     
 
         using namespace rayplus::keyboard; 
-        static auto &current_rules = Rules::extraverts;
+        static auto &current_rules = Rules::introverts;
         if(is_pressed(Key::enter))
         {
             rule_idx = ++rule_idx % current_rules.size();

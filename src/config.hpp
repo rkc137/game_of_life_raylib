@@ -14,10 +14,17 @@ constexpr int Y = window_size.y / rect_size;
 constexpr int past_size = 3;
 constexpr int howmh_frames_skip = 0;
 constexpr int born_chance = 2;
-constexpr bool is_rainbow_rave = true;
 constexpr auto shadow_color = rayplus::Color{0, 0, 0, 10};
 constexpr auto alive_color = rayplus::Color{230, 41, 55, 255 / (past_size + 1)};
 const auto dead_color = rayplus::Color::black;
+
+enum class DrawMode
+{
+    normal,
+    rainbow,
+    rainbow_porridge
+};
+constexpr auto draw_mode = DrawMode::rainbow_porridge;
 
 using Map = std::array<std::bitset<X + 2>, Y + 2>;
 using PastMaps = std::vector<std::reference_wrapper<Map>>;
