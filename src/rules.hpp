@@ -10,7 +10,7 @@ namespace Rules
 using Extravert = const std::function<bool(int)>;
 using Introvert = const std::function<bool(int, int)>;
 
-const std::array<Extravert, 3> extraverts = {
+const auto extraverts = std::to_array<Extravert>({
     [](int count) -> bool { 
         if(2 * past_size > count || count > 4 * past_size)
             return false;
@@ -22,9 +22,9 @@ const std::array<Extravert, 3> extraverts = {
     [](int count) -> bool { 
         return 2 * past_size > count || count > 4 * past_size;
     }
-};
+});
 
-const std::array<Introvert, 3> introverts = {
+const auto introverts = std::to_array<Introvert>({
     //classical
     [](int count, int selfs_count) -> bool {
         return (count == 3 || (count == 2 && selfs_count));
@@ -51,6 +51,6 @@ const std::array<Introvert, 3> introverts = {
             return true;
         return selfs_count == 1 || selfs_count == 2;
     }
-};
+});
 
 }
