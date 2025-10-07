@@ -11,11 +11,13 @@ constexpr int rect_size = 5;
 constexpr rayplus::Vector2<int> window_size = {1800, 900};
 constexpr int X = window_size.x / rect_size;
 constexpr int Y = window_size.y / rect_size;
-constexpr int past_size = 1;
+constexpr int past_size = 3;
 constexpr int howmh_frames_skip = 0;
-constexpr int born_chance = 10;
+constexpr int born_chance = 2;
+constexpr bool is_rainbow_rave = true;
+constexpr auto shadow_color = rayplus::Color{0, 0, 0, 10};
+constexpr auto alive_color = rayplus::Color{230, 41, 55, 255 / (past_size + 1)};
 const auto dead_color = rayplus::Color::black;
-const auto alive_color = rayplus::Color{230, 41, 55, 255 / (past_size + 1)};
 
 using Map = std::array<std::bitset<X + 2>, Y + 2>;
 using PastMaps = std::vector<std::reference_wrapper<Map>>;

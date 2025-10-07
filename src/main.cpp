@@ -12,7 +12,18 @@
 void draw(const Universe &maps)
 {
     rayplus::draw([&](rayplus::DrawContext &ctx){
-        ctx.clear(dead_color);
+        rayplus::Color rainbow_color;
+        if constexpr (!is_rainbow_rave)
+        {
+            ctx.clear(dead_color);
+        }
+        else
+        {
+            //you cant make shadow with clear, cause when clean calls, its CLEAR it all
+            ctx.draw_rect({}, window_size, shadow_color);
+            rainbow_color = rayplus::Color{rand() % 255, rand() % 255, rand() % 255, 255};
+        }
+        
         for(auto &map : maps)
         {
             for(int y = 0; y < Y; y++)
@@ -21,7 +32,11 @@ void draw(const Universe &maps)
                     ctx.draw_rect(
                         {rect_size * x, rect_size * y},
                         {rect_size,     rect_size},
-                        alive_color
+                        [&](){
+                            if constexpr (is_rainbow_rave)
+                                return rainbow_color;
+                            return alive_color;
+                        }()
                     );
         }
     });
@@ -49,6 +64,7 @@ void sim_frame(PastMaps &pasts, Map &future, RuleT &rule)
             future[y][x] = rule(count);
         else if constexpr (std::is_same_v<RuleT, Rules::Introvert>)
             future[y][x] = rule(count, selfs_count);
+        else static_assert(false, "the behavior for this rule (if its rule) is undefined");
     }
 }
 
@@ -85,17 +101,17 @@ int main()
     
 
         using namespace rayplus::keyboard; 
-        static auto &rules = Rules::introverts;
+        static auto &current_rules = Rules::extraverts;
         if(is_pressed(Key::enter))
         {
-            rule_idx = ++rule_idx % rules.size();
+            rule_idx = ++rule_idx % current_rules.size();
             rayplus::window::set_title("rule: " + std::to_string(rule_idx));
         }
         else if(is_pressed(Key::space))
             for(auto past : pasts)
                 setup(past);
 
-        sim_frame(pasts, present, rules[rule_idx]);
+        sim_frame(pasts, present, current_rules[rule_idx]);
         if(!(turn % (howmh_frames_skip + 1)))
             draw(maps);
         std::this_thread::sleep_for(
