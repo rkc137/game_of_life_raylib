@@ -1,5 +1,4 @@
 #include <rayplus/Window.hpp>
-#include <rayplus/Draw.hpp>
 #include <rayplus/Keyboard.hpp>
 
 #include <random>
@@ -33,26 +32,24 @@ void clear(Universe &maps, Frame frame)
 int main()
 {
     Universe maps;
+    MapsInOrder maps_in_order{maps.begin(), maps.end()};
     setup(maps, full_frame);
-    static auto &current_rules = Rules::introverts;
 
-    const double target_fps = 60;
-    const std::chrono::duration<double> frame_duration(1.0 / target_fps);
     auto win_closer = rayplus::window::init(
         window_size, "game of life raylib", target_fps
     );
 
+    static auto &current_rules = Rules::introverts;
     int rule_idx = 0;
     for(unsigned int turn = 0; !rayplus::window::should_close(); turn++)
     {
         auto start_time = std::chrono::system_clock::now();
-        PastMaps pasts;
-        pasts.reserve(past_size);
-        for(int i = 0; i < past_size; i++)
-            pasts.push_back(maps[(turn + i) % maps.size()]);
-        auto &present = 
-            maps[(turn + past_size) % maps.size()];
-    
+        
+        maps_in_order.splice(
+            maps_in_order.end(),
+            maps_in_order,
+            maps_in_order.begin()
+        );
 
         using namespace rayplus::keyboard;
         switch(get_key_pressed())
@@ -73,9 +70,9 @@ int main()
             default:
         }
 
-        sim_frame(pasts, present, current_rules[rule_idx]);
+        sim_frame(maps_in_order, current_rules[rule_idx]);
         if(!(turn % (howmh_frames_skip + 1)))
-            draw(maps);
+            draw(maps_in_order);
         std::this_thread::sleep_for(
             frame_duration - (std::chrono::system_clock::now() - start_time)
         );

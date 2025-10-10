@@ -3,10 +3,13 @@
 #include <bitset>
 #include <array>
 #include <vector>
+#include <list>
 
 #include <rayplus/Vector2.hpp>
 #include <rayplus/Color.hpp>
 
+constexpr double target_fps = 10;
+constexpr auto frame_duration = std::chrono::duration<double>(1.0 / target_fps);
 constexpr int rect_size = 5;
 constexpr rayplus::Vector2<int> window_size = {1800, 900};
 constexpr int X = window_size.x / rect_size;
@@ -14,8 +17,9 @@ constexpr int Y = window_size.y / rect_size;
 constexpr int past_size = 1;
 constexpr int howmh_frames_skip = 0;
 constexpr int born_chance = 2;
+constexpr bool draw_only_present = true;
 constexpr auto shadow_color = rayplus::Color{0, 0, 0, 10};
-constexpr auto alive_color = rayplus::Color{230, 41, 55, 255 / (past_size + 1)};
+constexpr auto alive_color = rayplus::Color{230, 41, 55, 255 / (draw_only_present ? 1 : (past_size + 1))};
 const auto dead_color = rayplus::Color::black;
 
 enum class DrawMode
@@ -27,8 +31,8 @@ enum class DrawMode
 constexpr auto draw_mode = DrawMode::normal;
 
 using Map = std::array<std::bitset<X + 2>, Y + 2>;
-using PastMaps = std::vector<std::reference_wrapper<Map>>;
 using Universe = std::array<Map, past_size + 1>;
+using MapsInOrder = std::list<std::reference_wrapper<Map>>;
 using Frame = std::pair<rayplus::Vector2<int>, rayplus::Vector2<int>>;
 
 constexpr Frame full_frame = {
