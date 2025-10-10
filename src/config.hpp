@@ -15,15 +15,13 @@ constexpr int rect_size = 5;
 constexpr rayplus::Vector2<int> window_size = {1800, 900};
 constexpr int X = window_size.x / rect_size;
 constexpr int Y = window_size.y / rect_size;
-constexpr int past_size = 1;
 constexpr int howmh_frames_skip = 0;
 constexpr int born_chance = 2;
 constexpr auto shadow_color = rayplus::Color{0, 0, 0, 10};
 const auto dead_color = rayplus::Color::black;
 
-
 using Map = std::array<std::bitset<X + 2>, Y + 2>;
-using Universe = std::array<Map, past_size + 1>;
+using Universe = std::vector<Map>;
 using MapsInOrder = std::list<std::reference_wrapper<Map>>;
 using Frame = std::pair<rayplus::Vector2<int>, rayplus::Vector2<int>>;
 
@@ -64,6 +62,8 @@ public:
         enum_size
     } draw_mode = DrawMode::normal;
     static constexpr int DrawModes_size = static_cast<int>(DrawMode::enum_size);
+
+    int past_size = 1;
 private:
     bool present_draw = true;
     rayplus::Color alive_color = rayplus::Color::red;

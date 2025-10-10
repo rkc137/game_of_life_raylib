@@ -31,7 +31,7 @@ void clear(Universe &maps, Frame frame)
 
 int main()
 {
-    Universe maps;
+    Universe maps{std::size_t(config.past_size + 1), {}};
     MapsInOrder maps_in_order{maps.begin(), maps.end()};
     setup(maps, full_frame);
 
@@ -42,6 +42,12 @@ int main()
     bool is_introverts = true;
 
     int rule_idx = 0;
+    auto update_title = [&](){
+        rayplus::window::set_title(
+            "past size: " + std::to_string(config.past_size) +
+            std::string(is_introverts ? "  introvert" : "  extravert") +
+            " rule: " + std::to_string(rule_idx));
+    };
     for(unsigned int turn = 0; !rayplus::window::should_close(); turn++)
     {
         auto start_time = std::chrono::system_clock::now();
@@ -66,8 +72,7 @@ int main()
                 {
                     rule_idx = ++rule_idx % (is_introverts ? Rules::introverts.size() : Rules::extraverts.size());
                 }
-                rayplus::window::set_title(
-                    std::string(is_introverts ? "introvert" : "extravert") + " rule: " + std::to_string(rule_idx));
+                update_title();
             break;
             case Key::r:
                 setup(maps, (is_ctrl_down ? little_frame : full_frame));
@@ -76,14 +81,35 @@ int main()
                 clear(maps, (is_ctrl_down ? little_frame : full_frame));
             break;
             case Key::p:
-                static bool idop = false;
-                idop = !idop;
-                config.set_drawing_only_present(idop);
+                if(is_ctrl_down)
+                {
+                    static bool idop = false;
+                    idop = !idop;
+                    config.set_drawing_only_present(idop);   
+                }
+                else
+                {
+                    config.draw_mode = static_cast<Config::DrawMode>(
+                        (static_cast<int>(config.draw_mode) + 1) % Config::DrawModes_size
+                    );
+                }
             break;
             case Key::grave:
-                config.draw_mode = static_cast<Config::DrawMode>(
-                    (static_cast<int>(config.draw_mode) + 1) % Config::DrawModes_size
-                );
+                //for now its just reassign
+                if(is_ctrl_down)
+                {
+                    if(config.past_size <= 1)
+                        break;
+                    config.past_size--;
+                }
+                else
+                {
+                    config.past_size++;
+                }
+                maps.resize(config.past_size + 1);
+                maps_in_order.assign(maps.begin(), maps.end());
+                setup(maps, full_frame);
+                update_title();
             break;
             default:
         }
