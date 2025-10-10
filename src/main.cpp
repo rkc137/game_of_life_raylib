@@ -80,6 +80,11 @@ int main()
                 idop = !idop;
                 config.set_drawing_only_present(idop);
             break;
+            case Key::grave:
+                config.draw_mode = static_cast<Config::DrawMode>(
+                    (static_cast<int>(config.draw_mode) + 1) % Config::DrawModes_size
+                );
+            break;
             default:
         }
 

@@ -8,14 +8,6 @@
 #include <rayplus/Vector2.hpp>
 #include <rayplus/Color.hpp>
 
-enum class DrawMode
-{
-    normal,
-    rainbow,
-    rainbow_porridge
-};
-constexpr auto draw_mode = DrawMode::normal;
-
 
 constexpr double target_fps = 10;
 constexpr auto frame_duration = std::chrono::duration<double>(1.0 / target_fps);
@@ -62,7 +54,16 @@ public:
     
     [[nodiscard]] bool is_drawing_only_present() const { return present_draw; }
     [[nodiscard]] rayplus::Color get_alive_color() const { return alive_color; }
+
     
+    enum class DrawMode
+    {
+        normal = 0,
+        rainbow,
+        rainbow_porridge,
+        enum_size
+    } draw_mode = DrawMode::normal;
+    static constexpr int DrawModes_size = static_cast<int>(DrawMode::enum_size);
 private:
     bool present_draw = true;
     rayplus::Color alive_color = rayplus::Color::red;

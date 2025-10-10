@@ -10,7 +10,7 @@ void draw(const MapsInOrder &maps)
     auto &ctx = drawler.ctx;
 
     rayplus::Color rainbow_color;
-    if constexpr (draw_mode == DrawMode::normal)
+    if(config.draw_mode == Config::DrawMode::normal)
     {
         ctx.clear(dead_color);
     }
@@ -19,7 +19,7 @@ void draw(const MapsInOrder &maps)
         //you cant make shadow with clear, cause when clean calls, its CLEAR it all
         ctx.draw_rect({}, window_size, shadow_color);
         
-        if constexpr (draw_mode == DrawMode::rainbow)
+        if(config.draw_mode == Config::DrawMode::rainbow)
             rainbow_color = rayplus::Color{rand() % 255, rand() % 255, rand() % 255, 255};
         // else if constexpr (draw_mode == DrawMode::rainbow_porridge);
     }
@@ -33,14 +33,14 @@ void draw(const MapsInOrder &maps)
                     {rect_size * x, rect_size * y},
                     {rect_size,     rect_size},
                     [&]() -> rayplus::Color {
-                        if constexpr (draw_mode == DrawMode::normal)
+                        if(config.draw_mode == Config::DrawMode::normal)
                             return config.get_alive_color();
-                        else if constexpr (draw_mode == DrawMode::rainbow)
+                        else if(config.draw_mode == Config::DrawMode::rainbow)
                             return rainbow_color;
-                        else if constexpr (draw_mode == DrawMode::rainbow_porridge)
+                        else if(config.draw_mode == Config::DrawMode::rainbow_porridge)
                             return {rand() % 255, rand() % 255, rand() % 255, 255};
-                        else
-                            throw std::runtime_error("the behavior for this rule (if its rule) is undefined");
+                        
+                        throw std::runtime_error("the behavior for this rule (if its rule) is undefined");
                         return {};
                     }()
                 );
