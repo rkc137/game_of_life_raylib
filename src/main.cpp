@@ -75,6 +75,11 @@ int main()
             case Key::c:
                 clear(maps, (is_ctrl_down ? little_frame : full_frame));
             break;
+            case Key::p:
+                static bool idop = false;
+                idop = !idop;
+                config.set_drawing_only_present(idop);
+            break;
             default:
         }
 

@@ -34,7 +34,7 @@ void draw(const MapsInOrder &maps)
                     {rect_size,     rect_size},
                     [&]() -> rayplus::Color {
                         if constexpr (draw_mode == DrawMode::normal)
-                            return alive_color;
+                            return config.get_alive_color();
                         else if constexpr (draw_mode == DrawMode::rainbow)
                             return rainbow_color;
                         else if constexpr (draw_mode == DrawMode::rainbow_porridge)
@@ -45,7 +45,7 @@ void draw(const MapsInOrder &maps)
                     }()
                 );
     };
-    if constexpr (draw_only_present)
+    if(config.is_drawing_only_present())
         draw_map(maps.back().get());
     else
         for(auto &map_ref : maps)
