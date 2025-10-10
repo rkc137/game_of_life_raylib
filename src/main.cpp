@@ -39,7 +39,8 @@ int main()
         window_size, "game of life raylib", target_fps
     );
 
-    static auto &current_rules = Rules::introverts;
+    bool is_introverts = true;
+
     int rule_idx = 0;
     for(unsigned int turn = 0; !rayplus::window::should_close(); turn++)
     {
@@ -52,27 +53,39 @@ int main()
         );
 
         using namespace rayplus::keyboard;
+        auto is_ctrl_down = (is_down(Key::left_control) || is_down(Key::right_control));
         switch(get_key_pressed())
         {
             case Key::enter:
-                rule_idx = ++rule_idx % current_rules.size();
-                rayplus::window::set_title("rule: " + std::to_string(rule_idx));
+                if(is_ctrl_down)
+                {
+                    is_introverts ^= true;
+                    rule_idx = 0;
+                } 
+                else
+                {
+                    rule_idx = ++rule_idx % (is_introverts ? Rules::introverts.size() : Rules::extraverts.size());
+                }
+                rayplus::window::set_title(
+                    std::string(is_introverts ? "introvert" : "extravert") + " rule: " + std::to_string(rule_idx));
             break;
             case Key::r:
-                setup(maps, full_frame);
-            break;
-            case Key::space:
-                setup(maps, little_frame);
+                setup(maps, (is_ctrl_down ? little_frame : full_frame));
             break;
             case Key::c:
-                clear(maps, little_frame);
+                clear(maps, (is_ctrl_down ? little_frame : full_frame));
             break;
             default:
         }
 
-        sim_frame(maps_in_order, current_rules[rule_idx]);
+        if(is_introverts)
+            sim_frame(maps_in_order, Rules::introverts[rule_idx]);
+        else
+            sim_frame(maps_in_order, Rules::extraverts[rule_idx]);
+
         if(!(turn % (howmh_frames_skip + 1)))
             draw(maps_in_order);
+
         std::this_thread::sleep_for(
             frame_duration - (std::chrono::system_clock::now() - start_time)
         );
