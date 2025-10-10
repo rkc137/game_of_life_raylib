@@ -13,7 +13,7 @@
 
 void setup(Universe &maps, Frame frame)
 {
-    static const auto [pos, size] = frame;
+    const auto [pos, size] = frame;
     for(auto &map : maps)
         for(int y = pos.y; y < size.y; y++)
         for(int x = pos.x; x < size.x; x++)
@@ -22,7 +22,7 @@ void setup(Universe &maps, Frame frame)
 
 void clear(Universe &maps, Frame frame)
 {
-    static const auto [pos, size] = frame;
+    const auto [pos, size] = frame;
     for(auto &map : maps)
         for(int y = pos.y; y < size.y; y++)
         for(int x = pos.x; x < size.x; x++)
