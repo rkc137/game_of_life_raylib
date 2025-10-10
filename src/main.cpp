@@ -1,5 +1,4 @@
 #include <rayplus/Window.hpp>
-#include <rayplus/Draw.hpp>
 #include <rayplus/Keyboard.hpp>
 
 #include <random>
@@ -14,7 +13,7 @@
 
 void setup(Universe &maps, Frame frame)
 {
-    static const auto [pos, size] = frame;
+    const auto [pos, size] = frame;
     for(auto &map : maps)
         for(int y = pos.y; y < size.y; y++)
         for(int x = pos.x; x < size.x; x++)
@@ -23,7 +22,7 @@ void setup(Universe &maps, Frame frame)
 
 void clear(Universe &maps, Frame frame)
 {
-    static const auto [pos, size] = frame;
+    const auto [pos, size] = frame;
     for(auto &map : maps)
         for(int y = pos.y; y < size.y; y++)
         for(int x = pos.x; x < size.x; x++)
@@ -32,50 +31,97 @@ void clear(Universe &maps, Frame frame)
 
 int main()
 {
-    Universe maps;
+    Universe maps{std::size_t(config.past_size + 1), {}};
+    MapsInOrder maps_in_order{maps.begin(), maps.end()};
     setup(maps, full_frame);
-    static auto &current_rules = Rules::introverts;
 
-    const double target_fps = 60;
-    const std::chrono::duration<double> frame_duration(1.0 / target_fps);
     auto win_closer = rayplus::window::init(
         window_size, "game of life raylib", target_fps
     );
 
+    bool is_introverts = true;
+
     int rule_idx = 0;
+    auto update_title = [&](){
+        rayplus::window::set_title(
+            "past size: " + std::to_string(config.past_size) +
+            std::string(is_introverts ? "  introvert" : "  extravert") +
+            " rule: " + std::to_string(rule_idx));
+    };
     for(unsigned int turn = 0; !rayplus::window::should_close(); turn++)
     {
         auto start_time = std::chrono::system_clock::now();
-        PastMaps pasts;
-        pasts.reserve(past_size);
-        for(int i = 0; i < past_size; i++)
-            pasts.push_back(maps[(turn + i) % maps.size()]);
-        auto &present = 
-            maps[(turn + past_size) % maps.size()];
-    
+        
+        maps_in_order.splice(
+            maps_in_order.end(),
+            maps_in_order,
+            maps_in_order.begin()
+        );
 
         using namespace rayplus::keyboard;
+        auto is_ctrl_down = (is_down(Key::left_control) || is_down(Key::right_control));
         switch(get_key_pressed())
         {
             case Key::enter:
-                rule_idx = ++rule_idx % current_rules.size();
-                rayplus::window::set_title("rule: " + std::to_string(rule_idx));
+                if(is_ctrl_down)
+                {
+                    is_introverts ^= true;
+                    rule_idx = 0;
+                } 
+                else
+                {
+                    rule_idx = ++rule_idx % (is_introverts ? Rules::introverts.size() : Rules::extraverts.size());
+                }
+                update_title();
             break;
             case Key::r:
-                setup(maps, full_frame);
-            break;
-            case Key::space:
-                setup(maps, little_frame);
+                setup(maps, (is_ctrl_down ? little_frame : full_frame));
             break;
             case Key::c:
-                clear(maps, little_frame);
+                clear(maps, (is_ctrl_down ? little_frame : full_frame));
+            break;
+            case Key::p:
+                if(is_ctrl_down)
+                {
+                    static bool idop = false;
+                    idop = !idop;
+                    config.set_drawing_only_present(idop);   
+                }
+                else
+                {
+                    config.draw_mode = static_cast<Config::DrawMode>(
+                        (static_cast<int>(config.draw_mode) + 1) % Config::DrawModes_size
+                    );
+                }
+            break;
+            case Key::grave:
+                //for now its just reassign
+                if(is_ctrl_down)
+                {
+                    if(config.past_size <= 1)
+                        break;
+                    config.past_size--;
+                }
+                else
+                {
+                    config.past_size++;
+                }
+                maps.resize(config.past_size + 1);
+                maps_in_order.assign(maps.begin(), maps.end());
+                setup(maps, full_frame);
+                update_title();
             break;
             default:
         }
 
-        sim_frame(pasts, present, current_rules[rule_idx]);
+        if(is_introverts)
+            sim_frame(maps_in_order, Rules::introverts[rule_idx]);
+        else
+            sim_frame(maps_in_order, Rules::extraverts[rule_idx]);
+
         if(!(turn % (howmh_frames_skip + 1)))
-            draw(maps);
+            draw(maps_in_order);
+
         std::this_thread::sleep_for(
             frame_duration - (std::chrono::system_clock::now() - start_time)
         );

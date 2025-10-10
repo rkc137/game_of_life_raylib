@@ -17,9 +17,8 @@ FetchContent_Declare(
     GIT_TAG 82db172837b9617b8e9a97bf098c4e3acec115da
 )
 FetchContent_MakeAvailable(rayplus)
-
-add_compile_options(-Wall -Wextra)
 add_executable(game_of_life src/main.cpp)
 
+target_compile_options(game_of_life PRIVATE -Wall -Wextra -Wpedantic)
 target_link_libraries(game_of_life PRIVATE rayplus)
 target_link_options(game_of_life PRIVATE -static)
