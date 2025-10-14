@@ -5,14 +5,14 @@
 template <typename RuleT>
 void sim_frame(MapsInOrder &maps, RuleT &rule)
 {
-    const auto prelast = std::prev(maps.end());
-    auto &future = maps.back().get();
+    const auto last = std::prev(maps.end());
+    auto &future = last->get();
     for(int y = 1; y < Y + 1; y++)
     for(int x = 1; x < X + 1; x++)
     {
         int count = 0;
         int selfs_count = 0;
-        for(auto past_ref = maps.begin(); past_ref != prelast; ++past_ref)
+        for(auto past_ref = maps.begin(); past_ref != last; ++past_ref)
         {
             auto &past = past_ref->get();
             count -= past[y][x];
