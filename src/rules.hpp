@@ -9,7 +9,7 @@ namespace Rules
 
 using Extravert = const std::function<bool(int)>;
 using Introvert = const std::function<bool(int, int)>;
-auto &past_size = config.past_size;
+auto &past_size = config.past_size_ref;
 
 const auto extraverts = std::to_array<Extravert>({
     [](int count) -> bool { 
@@ -17,7 +17,7 @@ const auto extraverts = std::to_array<Extravert>({
             return false;
         return true;
     },
-    [](int count) -> bool { 
+    [](int count) -> bool { //hmm past size 1
         return 2 * past_size > count && count > 4 * past_size;
     },
     [](int count) -> bool { 

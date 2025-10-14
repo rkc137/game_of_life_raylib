@@ -44,16 +44,22 @@ public:
     }
     ~Config() = default;
 
+    void set_past_size(int size)
+    {
+        past_size = size;
+        update_color();
+    }
+
     void set_drawing_only_present(bool is)
     {
         present_draw = is;
-        alive_color = {230, 41, 55, 255 / (present_draw ? 1 : (past_size + 1))};
+        update_color();
     }
     
     [[nodiscard]] bool is_drawing_only_present() const { return present_draw; }
     [[nodiscard]] rayplus::Color get_alive_color() const { return alive_color; }
+    [[nodiscard]] int get_past_size() const { return past_size; }
 
-    
     enum class DrawMode
     {
         normal = 0,
@@ -63,8 +69,13 @@ public:
     } draw_mode = DrawMode::normal;
     static constexpr int DrawModes_size = static_cast<int>(DrawMode::enum_size);
 
-    int past_size = 1;
+    const int& past_size_ref = past_size;
 private:
+    void update_color() 
+    {
+        alive_color = {230, 41, 55, 255 / (present_draw ? 1 : (past_size + 1))};
+    }
+    int past_size = 2;
     bool present_draw = true;
     rayplus::Color alive_color = rayplus::Color::red;
 } config;
