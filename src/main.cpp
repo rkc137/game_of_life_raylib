@@ -1,5 +1,6 @@
 #include <rayplus/Window.hpp>
 #include <rayplus/Keyboard.hpp>
+#include <rayplus/Logger.hpp>
 
 #include <random>
 #include <thread>
@@ -31,20 +32,21 @@ void clear(Universe &maps, Frame frame)
 
 int main()
 {
-    Universe maps{std::size_t(config.past_size + 1), {}};
+    Universe maps{std::size_t(config.past_size_ref + 1), {}};
     MapsInOrder maps_in_order{maps.begin(), maps.end()};
     setup(maps, full_frame);
 
     auto win_closer = rayplus::window::init(
         window_size, "game of life raylib", target_fps
     );
+    rayplus::logger::set_level(rayplus::logger::Level::none);
 
     bool is_introverts = true;
 
     int rule_idx = 0;
     auto update_title = [&](){
         rayplus::window::set_title(
-            "past size: " + std::to_string(config.past_size) +
+            "past size: " + std::to_string(config.past_size_ref) +
             std::string(is_introverts ? "  introvert" : "  extravert") +
             " rule: " + std::to_string(rule_idx));
     };
@@ -95,21 +97,28 @@ int main()
                 }
             break;
             case Key::grave:
+            {
                 //for now its just reassign
+                int psize = config.past_size_ref;
                 if(is_ctrl_down)
                 {
-                    if(config.past_size <= 1)
+                    if(psize <= 1)
                         break;
-                    config.past_size--;
+                    psize--;
                 }
                 else
                 {
-                    config.past_size++;
+                    psize++;
                 }
-                maps.resize(config.past_size + 1);
+                config.set_past_size(psize);
+                maps.resize(psize + 1);
                 maps_in_order.assign(maps.begin(), maps.end());
                 setup(maps, full_frame);
                 update_title();
+            }
+            break;
+            case Key::f11:
+                rayplus::window::toggle_fullscreen();
             break;
             default:
         }
