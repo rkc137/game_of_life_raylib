@@ -20,7 +20,7 @@ void draw(sf::RenderWindow &window, const MapsInOrder &maps)
             return rs;
         });
         window.draw(shadow);
-        
+
         if(*state.draw_mode == DrawMode::rainbow)
             rainbow_color = Color{
                 static_cast<uint8_t>(rand() % 255),
@@ -37,7 +37,7 @@ void draw(sf::RenderWindow &window, const MapsInOrder &maps)
             //     .position = {wsize.x / 2, wsize.y / 2},
             //     .color = state.get_alive_color()
             // };
-            using Square = std::array<sf::Vertex, 4>;
+            using Square = std::array<sf::Vertex, 6>;
             std::array<std::array<Square, X>, Y> vertexes;
         } squares;
         static constexpr auto &vertexes = squares.vertexes;
@@ -52,10 +52,12 @@ void draw(sf::RenderWindow &window, const MapsInOrder &maps)
             float rx = x * rect_size;
             float ry = y * rect_size;
             auto &v = vertexes[y][x];
-            v[0].position = {rx, ry};
+            v[0].position = {rx,             ry};
             v[1].position = {rx + rect_size, ry};
-            v[2].position = {rx, ry + rect_size};
-            v[3].position = {rx + rect_size, ry + rect_size};
+            v[2].position = {rx,             ry + rect_size};
+            v[3].position = {rx + rect_size, ry};
+            v[4].position = {rx + rect_size, ry + rect_size};
+            v[5].position = {rx,             ry + rect_size};
         }
         return squares;
     });
@@ -92,7 +94,7 @@ void draw(sf::RenderWindow &window, const MapsInOrder &maps)
         //                 return rainbow_color;
         //             else if(state.draw_mode == Config::DrawMode::rainbow_porridge)
         //                 return {rand() % 255, rand() % 255, rand() % 255, 255};
-                    
+
         //             throw std::runtime_error("the behavior for this rule (if its rule) is undefined");
         //             return {};
         //         }()

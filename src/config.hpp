@@ -27,7 +27,7 @@ constexpr std::array prims = {
     sf::PrimitiveType::LineStrip,     //!< List of connected lines, a point uses the previous point to form a line
     sf::PrimitiveType::Triangles,     //!< List of individual triangles
     sf::PrimitiveType::TriangleStrip, //!< List of connected triangles, a point uses the two previous points to form a triangle
-    sf::PrimitiveType::TriangleFan  
+    sf::PrimitiveType::TriangleFan
 };
 enum class DrawMode { normal, rainbow, rainbow_porridge };
 constexpr std::array draw_modes = {
@@ -56,12 +56,12 @@ constexpr Frame little_frame = {
 struct State
 {
 public:
-    [[nodiscard]] uint8_t get_alive_color_alpha() 
+    [[nodiscard]] uint8_t get_alive_color_alpha()
     {
         return static_cast<uint8_t>(255 / (is_present_draw ? 1 : (past_size + 1)));
     }
 
-    decltype(prims.begin()) premitiva = prims.begin() + static_cast<int>(sf::PrimitiveType::TriangleStrip);
+    decltype(prims.begin()) premitiva = prims.begin() + static_cast<int>(sf::PrimitiveType::Triangles);
     decltype(draw_modes.begin()) draw_mode = draw_modes.begin();
     int past_size = 1;
     bool is_present_draw = true;
